@@ -1,29 +1,29 @@
 from fastapi import FastAPI
 
+import app.models.athlete
+import app.models.physiology
 from app.api.athletes import router as athlete_router
+from app.api.physiology import router as physiology_router
 from app.db.database import Base, engine
 
-# Tuo mallit, jotta SQLAlchemy rekisteröi ne
-import app.models.athlete
 
-# Luo taulut (myöhemmin tämä korvataan Alembic-migraatioilla)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="ATHENA AI Endurance Coach",
-    version="0.2.0",
-    description="AI-powered endurance coaching platform",
+    version="0.3.0",
+    description="Personal endurance coaching and training platform",
 )
 
-# Rekisteröi API-reitit
 app.include_router(athlete_router)
+app.include_router(physiology_router)
 
 
 @app.get("/")
 def root():
     return {
         "application": "ATHENA",
-        "version": "0.2.0",
+        "version": "0.3.0",
         "status": "running",
     }
 
@@ -32,4 +32,11 @@ def root():
 def health():
     return {
         "status": "ok",
+    }
+
+
+@app.get("/version")
+def version():
+    return {
+        "version": "0.3.0",
     }
